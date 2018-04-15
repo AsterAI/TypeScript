@@ -4165,6 +4165,11 @@ namespace ts {
         [option: string]: CompilerOptionsValue | JsonSourceFile | undefined;
     }
 
+    export interface OptimizationOptions {
+        // removes any code that can't be reach
+        removeUnreachable?: boolean;
+    }
+
     export interface TypeAcquisition {
         /* @deprecated typingOptions.enableAutoDiscovery
          * Use typeAcquisition.enable instead.

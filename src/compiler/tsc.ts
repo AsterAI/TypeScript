@@ -117,7 +117,7 @@ namespace ts {
                 createWatchOfConfigFile(configParseResult, commandLineOptions);
             }
             else {
-                performCompilation(configParseResult.fileNames, configParseResult.options);
+                performCompilation(configParseResult.fileNames, configParseResult.options, configParseResult.raw.optimizations);
             }
         }
         else {
@@ -139,11 +139,11 @@ namespace ts {
         }
     }
 
-    function performCompilation(rootFileNames: string[], compilerOptions: CompilerOptions) {
+    function performCompilation(rootFileNames: string[], compilerOptions: CompilerOptions, optimizations?: OptimizationOptions) {
         const compilerHost = createCompilerHost(compilerOptions);
         enableStatistics(compilerOptions);
 
-        const program = createProgram(rootFileNames, compilerOptions, compilerHost);
+        const program = createProgram(rootFileNames, compilerOptions, compilerHost, undefined, optimizations);
         const exitStatus = emitFilesAndReportErrors(program, reportDiagnostic, s => sys.write(s + sys.newLine));
         reportStatistics(program);
         return sys.exit(exitStatus);
@@ -167,7 +167,14 @@ namespace ts {
     }
 
     function createWatchOfConfigFile(configParseResult: ParsedCommandLine, optionsToExtend: CompilerOptions) {
-        const watchCompilerHost = createWatchCompilerHostOfConfigFile(configParseResult.options.configFilePath, optionsToExtend, sys, /*createProgram*/ undefined, reportDiagnostic, createWatchStatusReporter(configParseResult.options));
+        const watchCompilerHost = createWatchCompilerHostOfConfigFile(
+            configParseResult.options.configFilePath,
+            optionsToExtend,
+            sys,
+            /*createProgram*/ undefined,
+            reportDiagnostic,
+            createWatchStatusReporter(configParseResult.options)
+        );
         updateWatchCompilationHost(watchCompilerHost);
         watchCompilerHost.rootFiles = configParseResult.fileNames;
         watchCompilerHost.options = configParseResult.options;

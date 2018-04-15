@@ -685,6 +685,14 @@ namespace ts {
     ];
 
     /* @internal */
+    export const optimizationsOptions: CommandLineOption[] = [
+        {
+            name: "removeUnreachable",
+            type: "boolean",
+        }
+    ];
+
+    /* @internal */
     export const typeAcquisitionDeclarations: CommandLineOption[] = [
         {
             /* @deprecated typingOptions.enableAutoDiscovery
@@ -985,6 +993,12 @@ namespace ts {
                     name: "typeAcquisition",
                     type: "object",
                     elementOptions: commandLineOptionsToMap(typeAcquisitionDeclarations),
+                    extraKeyDiagnosticMessage: Diagnostics.Unknown_type_acquisition_option_0
+                },
+                {
+                    name: "optimizationsOptions",
+                    type: "object",
+                    elementOptions: commandLineOptionsToMap(optimizationsOptions),
                     extraKeyDiagnosticMessage: Diagnostics.Unknown_type_acquisition_option_0
                 },
                 {
@@ -1553,6 +1567,7 @@ namespace ts {
     interface ParsedTsconfig {
         raw: any;
         options?: CompilerOptions;
+        optimizations?: OptimizationOptions;
         typeAcquisition?: TypeAcquisition;
         /**
          * Note that the case of the config path has not yet been normalized, as no files have been imported into the project yet
@@ -1565,7 +1580,7 @@ namespace ts {
     }
 
     /**
-     * This *just* extracts options/include/exclude/files out of a config file.
+     * This *just* extracts options/include/exclude/files/optimizations out of a config file.
      * It does *not* resolve the included files.
      */
     function parseConfig(

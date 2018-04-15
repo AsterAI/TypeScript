@@ -487,7 +487,13 @@ namespace ts {
      * @param oldProgram - Reuses an old program structure.
      * @returns A 'Program' object.
      */
-    export function createProgram(rootNames: ReadonlyArray<string>, options: CompilerOptions, host?: CompilerHost, oldProgram?: Program): Program {
+    export function createProgram(
+        rootNames: ReadonlyArray<string>,
+        options: CompilerOptions,
+        host?: CompilerHost,
+        oldProgram?: Program,
+        optimizations?: OptimizationOptions
+    ): Program {
         let program: Program;
         let files: SourceFile[] = [];
         let commonSourceDirectory: string;
@@ -521,6 +527,7 @@ namespace ts {
 
         performance.mark("beforeProgram");
 
+        sys.write(JSON.stringify(optimizations));
         host = host || createCompilerHost(options);
 
         let skipDefaultLib = options.noLib;
@@ -1135,7 +1142,14 @@ namespace ts {
             return hasEmitBlockingDiagnostics.has(toPath(emitFileName));
         }
 
-        function emitWorker(program: Program, sourceFile: SourceFile, writeFileCallback: WriteFileCallback, cancellationToken: CancellationToken, emitOnlyDtsFiles?: boolean, customTransformers?: CustomTransformers): EmitResult {
+        function emitWorker(
+            program: Program,
+            sourceFile: SourceFile,
+            writeFileCallback: WriteFileCallback,
+            cancellationToken: CancellationToken,
+            emitOnlyDtsFiles?: boolean,
+            customTransformers?: CustomTransformers
+        ): EmitResult {
             let declarationDiagnostics: ReadonlyArray<Diagnostic> = [];
 
             if (!emitOnlyDtsFiles) {

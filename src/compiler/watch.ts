@@ -81,7 +81,11 @@ namespace ts {
     /**
      * Reads the config file, reports errors if any and exits if the config file cannot be found
      */
-    export function getParsedCommandLineOfConfigFile(configFileName: string, optionsToExtend: CompilerOptions, host: ParseConfigFileHost): ParsedCommandLine | undefined {
+    export function getParsedCommandLineOfConfigFile(
+        configFileName: string,
+        optionsToExtend: CompilerOptions,
+        host: ParseConfigFileHost
+    ): ParsedCommandLine | undefined {
         let configFileText: string;
         try {
             configFileText = host.readFile(configFileName);
@@ -101,7 +105,13 @@ namespace ts {
         result.parseDiagnostics.forEach(diagnostic => host.onConfigFileDiagnostic(diagnostic));
 
         const cwd = host.getCurrentDirectory();
-        const configParseResult = parseJsonSourceFileConfigFileContent(result, host, getNormalizedAbsolutePath(getDirectoryPath(configFileName), cwd), optionsToExtend, getNormalizedAbsolutePath(configFileName, cwd));
+        const configParseResult = parseJsonSourceFileConfigFileContent(
+            result,
+            host,
+            getNormalizedAbsolutePath(getDirectoryPath(configFileName), cwd),
+            optionsToExtend,
+            getNormalizedAbsolutePath(configFileName, cwd)
+        );
         configParseResult.errors.forEach(diagnostic => host.onConfigFileDiagnostic(diagnostic));
 
         return configParseResult;
